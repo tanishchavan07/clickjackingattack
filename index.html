@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>buymore — Style that fits you.</title>
+  <meta name="description" content="buymore - Demo fashion store for cybersecurity testing (CLICKJACKING LAB TARGET)." />
+  <style>
+    :root{
+      --bg:#f7f7f8;
+      --card:#ffffff;
+      --text:#0b0b0b;
+      --muted:#6b6b6b;
+      --accent:#c77dff; /* premium accent */
+      --accent-dark:#8a4bd6;
+      --glass: rgba(255,255,255,0.6);
+      --radius:14px;
+      --shadow: 0 6px 20px rgba(11,11,11,0.08);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+
+    /* Header */
+    header{position:sticky;top:0;z-index:60;background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.75));backdrop-filter: blur(6px);box-shadow:0 1px 0 rgba(0,0,0,0.04)}
+    .nav{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 20px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:18px;box-shadow:var(--shadow)}
+    .brand h1{font-size:18px;margin:0}
+    nav ul{display:flex;gap:18px;list-style:none;margin:0;padding:0;align-items:center}
+    nav li{font-weight:600;color:var(--muted)}
+    .nav-actions{display:flex;align-items:center;gap:12px}
+    .icon-btn{background:transparent;border:0;padding:8px;border-radius:10px;cursor:pointer;color:var(--muted)}
+    .search{display:flex;align-items:center;background:var(--card);padding:8px 10px;border-radius:12px;box-shadow:var(--shadow)}
+
+    /* Hero */
+    .hero{max-width:1200px;margin:28px auto;padding:26px;border-radius:18px;background:linear-gradient(90deg, #fff 60%, rgba(199,125,255,0.06));display:grid;grid-template-columns:1fr 420px;gap:24px;align-items:center}
+    .hero-left h2{font-size:34px;margin:0 0 12px}
+    .hero-left p{color:var(--muted);margin:0 0 18px}
+    .hero-cta{display:flex;gap:12px}
+    .btn{background:var(--accent);border:0;color:white;padding:12px 16px;border-radius:12px;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(199,125,255,0.18);transition:transform .14s}
+    .btn:hover{transform:translateY(-3px)}
+    .btn.ghost{background:transparent;color:var(--accent);border:2px solid rgba(199,125,255,0.16)}
+    .hero-right{display:flex;gap:10px;flex-direction:column}
+    .hero-img{border-radius:14px;overflow:hidden;box-shadow:var(--shadow);min-height:260px;background-size:cover;background-position:center}
+
+    /* Main content */
+    main{max-width:1200px;margin:24px auto;padding:0 20px}
+    .section-title{display:flex;justify-content:space-between;align-items:center;margin:12px 0}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .card{background:var(--card);padding:14px;border-radius:14px;box-shadow:var(--shadow);transition:transform .18s}
+    .card:hover{transform:translateY(-6px)}
+    .product-img{height:220px;border-radius:10px;background-size:cover;background-position:center;margin-bottom:12px}
+    .meta{display:flex;justify-content:space-between;align-items:center}
+    .price{font-weight:800}
+    .muted{color:var(--muted);font-size:13px}
+    .rating{background:linear-gradient(90deg,#ffd166,#ffb703);padding:6px;border-radius:8px;font-weight:700}
+    .badges{display:flex;gap:8px}
+
+    .card .actions{display:flex;gap:8px;margin-top:10px}
+    .small-btn{flex:1;padding:8px;border-radius:10px;border:0;cursor:pointer}
+    .small-btn.primary{background:var(--accent);color:white}
+    .small-btn.alt{background:#f3f3f4}
+
+    /* Product detail modal */
+    .modal{position:fixed;inset:0;background:rgba(11,11,11,0.5);display:none;align-items:center;justify-content:center;padding:24px;z-index:100}
+    .modal.open{display:flex}
+    .modal-card{width:100%;max-width:980px;background:var(--card);border-radius:14px;padding:18px;display:grid;grid-template-columns:420px 1fr;gap:18px}
+    .modal .big-img{height:420px;border-radius:10px;background-size:cover;background-position:center}
+    .specs{color:var(--muted);margin-top:12px;font-size:14px}
+
+    /* Cart modal */
+    .cart-modal{position:fixed;right:18px;top:70px;width:360px;background:var(--card);border-radius:12px;padding:14px;box-shadow:0 20px 40px rgba(11,11,11,0.12);display:none;z-index:80}
+    .cart-modal.open{display:block}
+    .cart-item{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px dashed #eee}
+    .cart-item img{width:64px;height:64px;border-radius:8px;object-fit:cover}
+
+    /* Checkout & payment screens */
+    .screen{display:none}
+    .screen.active{display:block}
+    .form-row{display:flex;gap:8px}
+    .input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6e6e6}
+    .summary{background:#fff; padding:12px;border-radius:12px;box-shadow:var(--shadow)}
+
+    footer{max-width:1200px;margin:36px auto;color:var(--muted);padding:26px 20px}
+
+    /* Responsive */
+    @media (max-width:980px){
+      .grid{grid-template-columns:repeat(2,1fr)}
+      .hero{grid-template-columns:1fr;}
+      .modal-card{grid-template-columns:1fr}
+    }
+    @media (max-width:600px){
+      .grid{grid-template-columns:1fr}
+      nav ul{display:none}
+      .search{display:none}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <div class="logo">BM</div>
+        <div>
+          <h1>buymore</h1>
+          <div class="muted" style="font-size:12px;margin-top:2px">Style that fits you.</div>
+        </div>
+      </div>
+
+      <nav>
+        <ul>
+          <li>Home</li>
+          <li>T-Shirts</li>
+          <li>Pants</li>
+          <li>New Arrivals</li>
+          <li>Offers</li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <div class="search"><input id="search-input" placeholder="Search products..." style="border:0;outline:none;min-width:200px;background:transparent"/></div>
+        <button class="icon-btn" id="cart-btn" title="Cart">🛒</button>
+        <button class="icon-btn" id="login-btn">Login</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-left">
+      <h2>Upgrade Your Everyday Style</h2>
+      <p>Premium T-Shirts and Pants designed for your everyday look.</p>
+      <div class="hero-cta">
+        <button class="btn" id="shop-tee">Shop T-Shirts</button>
+        <button class="btn ghost" id="shop-pants">Shop Pants</button>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-img" style="background-image:url('https://images.unsplash.com/photo-1520975912649-4b3bcbf8b1d5?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=8f6b1f3b6c7a5b4958a0d6b2c9feb2ea')"></div>
+      <div style="display:flex;gap:10px">
+        <div class="hero-img" style="flex:1;background-image:url('https://images.unsplash.com/photo-1521334884684-d80222895322?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=4b7a44b7f0f6c3d2f3f8f3f6a8e5bdde')"></div>
+        <div class="hero-img" style="flex:1;background-image:url('https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=8c8d6b6a6f8f9ef08f9d6f6a7c3ab2f8')"></div>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <section id="tshirts-section">
+      <div class="section-title">
+        <h3>T-Shirts</h3>
+        <div class="muted">Premium collection</div>
+      </div>
+      <div id="tshirts-grid" class="grid"></div>
+    </section>
+
+    <section id="pants-section" style="margin-top:26px">
+      <div class="section-title">
+        <h3>Pants</h3>
+        <div class="muted">Hand-picked styles</div>
+      </div>
+      <div id="pants-grid" class="grid"></div>
+    </section>
+  </main>
+
+  <!-- Product Detail Modal -->
+  <div id="product-modal" class="modal">
+    <div class="modal-card">
+      <div>
+        <div id="modal-image" class="big-img"></div>
+      </div>
+      <div>
+        <h2 id="modal-title">Product Name</h2>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:8px">
+          <div id="modal-rating" class="rating">4.8</div>
+          <div class="muted" id="modal-badge">BEST SELLER</div>
+        </div>
+        <div style="margin-top:12px">
+          <div class="price" id="modal-price">$59.00 <span class="muted" style="font-weight:600"> <s id="modal-old-price">$79.00</s></span></div>
+        </div>
+
+        <div style="margin-top:12px">
+          <label class="muted">Size</label>
+          <div style="display:flex;gap:8px;margin-top:8px" id="size-options"></div>
+        </div>
+
+        <div style="margin-top:12px">
+          <label class="muted">Color</label>
+          <div style="display:flex;gap:8px;margin-top:8px" id="color-options"></div>
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:10px;align-items:center">
+          <label class="muted">Qty</label>
+          <input id="modal-qty" type="number" value="1" min="1" style="width:80px;padding:8px;border-radius:8px;border:1px solid #eee" />
+        </div>
+
+        <div class="specs">
+          <p id="modal-desc">Product description goes here. Luxurious fabric and tailored fit.</p>
+          <ul id="modal-specs">
+          </ul>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:14px">
+          <button id="modal-add" class="small-btn alt">Add to Cart</button>
+          <button id="buy-now-btn" class="small-btn primary">Buy Now</button>
+          <button id="modal-close" class="small-btn">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Modal -->
+  <div id="cart" class="cart-modal">
+    <h4>Cart</h4>
+    <div id="cart-items"></div>
+    <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+      <div class="muted">Total</div>
+      <div id="cart-total" style="font-weight:800">$0.00</div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <button id="view-cart-btn" class="small-btn alt">View</button>
+      <button id="checkout-from-cart" class="small-btn primary">Checkout</button>
+    </div>
+  </div>
+
+  <!-- Screens: Checkout / Payment / Success -->
+  <div id="screens" style="max-width:1200px;margin:24px auto;padding:0 20px">
+    <div id="checkout-screen" class="screen">
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:18px">
+        <div>
+          <h3>Delivery Details</h3>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <input id="full-name" class="input" placeholder="Full Name" />
+            <input id="email" class="input" placeholder="Email" />
+            <input id="phone" class="input" placeholder="Phone" />
+            <input id="address" class="input" placeholder="Address" />
+            <div class="form-row"><input id="city" class="input" placeholder="City" /><input id="pincode" class="input" placeholder="Pincode" /></div>
+          </div>
+          <div style="margin-top:12px">
+            <button id="checkout-btn" class="btn">Proceed to Payment</button>
+          </div>
+        </div>
+        <div>
+          <h3>Order Summary</h3>
+          <div id="order-summary" class="summary"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="payment-screen" class="screen">
+      <h3>DEMO PAYMENT – NO REAL TRANSACTION</h3>
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:18px">
+        <div>
+          <div style="margin-bottom:12px">
+            <div class="muted">Order ID</div>
+            <div id="pay-order-id" style="font-weight:800;margin-top:6px">—</div>
+          </div>
+          <div style="margin-bottom:12px">
+            <div class="muted">Amount</div>
+            <div id="pay-amount" style="font-weight:800;margin-top:6px">—</div>
+          </div>
+
+          <div>
+            <label class="muted">Payment Method</label>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <label><input type="radio" name="pmethod" value="card" checked /> Card</label>
+              <label><input type="radio" name="pmethod" value="upi" /> UPI</label>
+              <label><input type="radio" name="pmethod" value="cod" /> Cash on Delivery</label>
+            </div>
+          </div>
+
+          <div id="card-form" style="margin-top:12px">
+            <input id="card-number" class="input" placeholder="Card Number" />
+            <div class="form-row" style="margin-top:8px"><input id="card-exp" class="input" placeholder="MM/YY" /><input id="card-cvv" class="input" placeholder="CVV" /></div>
+          </div>
+          <div style="margin-top:12px">
+            <button id="pay-now-btn" class="btn">Pay Now</button>
+          </div>
+        </div>
+
+        <div>
+          <h3>Order</h3>
+          <div id="pay-order" class="summary"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="success-screen" class="screen">
+      <h3>Payment Successful</h3>
+      <p>Your demo order has been placed successfully.</p>
+      <div class="muted">Order #: <span id="success-order">—</span></div>
+    </div>
+  </div>
+
+  <footer>
+    <div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center">
+      <div class="muted">THREADIFY is a fictional educational e-commerce application created for cybersecurity testing and demonstration.</div>
+      <div class="muted">© buymore — Demo</div>
+    </div>
+  </footer>
+
+  <script>
+    // Product data
+    const products = [
+      // T-Shirts
+      {id:'t1',category:'tshirt',name:'Classic Black T-Shirt',price:29.99,oldPrice:49.99,rating:4.7,badge:'BEST SELLER',img:'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=8c8d6b6a6f8f9ef08f9d6f6a7c3ab2f8',colors:['Black','White'],sizes:['S','M','L','XL','XXL'],desc:'A wardrobe essential: soft cotton, classic fit.'},
+      {id:'t2',category:'tshirt',name:'Oversized White T-Shirt',price:34.99,oldPrice:null,rating:4.5,badge:'NEW',img:'https://images.unsplash.com/photo-1520975912649-4b3bcbf8b1d5?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=8f6b1f3b6c7a5b4958a0d6b2c9feb2ea',colors:['White'],sizes:['S','M','L','XL','XXL'],desc:'Comfort-forward oversized silhouette.'},
+      {id:'t3',category:'tshirt',name:'Premium Navy T-Shirt',price:39.99,oldPrice:59.99,rating:4.8,badge:'SALE',img:'https://images.unsplash.com/photo-1521334884684-d80222895322?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=4b7a44b7f0f6c3d2f3f8f3f6a8e5bdde',colors:['Navy','Black'],sizes:['S','M','L','XL','XXL'],desc:'Refined finish with premium cotton.'},
+      {id:'t4',category:'tshirt',name:'Streetwear Graphic Tee',price:24.99,oldPrice:34.99,rating:4.4,badge:'',img:'https://images.unsplash.com/photo-1542060743-8bfa7c2b1cdd?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=3e7f0d9a2b6ea0c2f7d8b5e0f4c6a7b2',colors:['Beige','Black'],sizes:['S','M','L','XL','XXL'],desc:'Bold graphics, comfortable fit.'},
+      {id:'t5',category:'tshirt',name:'Minimal Beige T-Shirt',price:31.99,oldPrice:null,rating:4.6,badge:'NEW',img:'https://images.unsplash.com/photo-1520975927387-9b8b5de3e7f0?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=5c2d6e3a29b3f9d9e3f1b7a6c5d3b2a1',colors:['Beige'],sizes:['S','M','L','XL','XXL'],desc:'Understated style for everyday wear.'},
+      {id:'t6',category:'tshirt',name:'Classic Green T-Shirt',price:27.99,oldPrice:39.99,rating:4.3,badge:'SALE',img:'https://images.unsplash.com/photo-1472437774355-71ab6752b434?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=9f6a2e3b5c8d4a6b3e2f9a1b6c7d8e9f',colors:['Green','Black'],sizes:['S','M','L','XL','XXL'],desc:'Soft jersey with classic cut.'},
+
+      // Pants
+      {id:'p1',category:'pants',name:'Classic Black Jeans',price:59.99,oldPrice:89.99,rating:4.8,badge:'BEST SELLER',img:'https://images.unsplash.com/photo-1514995669114-3f9a5f3c9d49?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=2c6c4b8f9e5a6b3c7d8e9f0a1b2c3d4e',colors:['Black'],sizes:['S','M','L','XL','XXL'],desc:'Durable denim with flattering cut.'},
+      {id:'p2',category:'pants',name:'Blue Slim Jeans',price:64.99,oldPrice:null,rating:4.6,badge:'NEW',img:'https://images.unsplash.com/photo-1495121605193-b116b5b09a36?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=5a7b8c6d9e0f1a2b3c4d5e6f7a8b9c0d',colors:['Blue'],sizes:['S','M','L','XL','XXL'],desc:'Modern slim fit for daily wear.'},
+      {id:'p3',category:'pants',name:'Cargo Pants',price:49.99,oldPrice:69.99,rating:4.2,badge:'SALE',img:'https://images.unsplash.com/photo-1541099649106-8a3f3d6d0f2a?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d',colors:['Khaki','Black'],sizes:['S','M','L','XL','XXL'],desc:'Functional pockets and relaxed fit.'},
+      {id:'p4',category:'pants',name:'Beige Relaxed Pants',price:54.99,oldPrice:null,rating:4.3,badge:'',img:'https://images.unsplash.com/photo-1523381210114-2b0f95a0f5b4?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e',colors:['Beige'],sizes:['S','M','L','XL','XXL'],desc:'Effortless silhouette and breathable fabric.'},
+      {id:'p5',category:'pants',name:'Grey Joggers',price:39.99,oldPrice:49.99,rating:4.4,badge:'NEW',img:'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=3f4e5d6c7b8a9d0e1f2a3b4c5d6e7f8a',colors:['Grey','Black'],sizes:['S','M','L','XL','XXL'],desc:'Soft joggers with tapered cuff.'},
+      {id:'p6',category:'pants',name:'Dark Blue Denim',price:69.99,oldPrice:99.99,rating:4.7,badge:'SALE',img:'https://images.unsplash.com/photo-1503342452485-86f7b5b7a6d1?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d',colors:['Dark Blue'],sizes:['S','M','L','XL','XXL'],desc:'Premium denim with structured fit.'}
+    ];
+
+    // Utilities
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+    // Render grids
+    function createCard(p){
+      const div = document.createElement('div');div.className='card';
+      div.innerHTML = `
+        <div class="product-img" style="background-image:url('${p.img}')"></div>
+        <div class="meta"><div><strong>${p.name}</strong><div class="muted">${p.category.toUpperCase()}</div></div><div class="badges">${p.badge?`<span class="muted">${p.badge}</span>`:''}<div class="rating">⭐ ${p.rating}</div></div></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+          <div><div class="price">$${p.price.toFixed(2)}</div>${p.oldPrice?`<div class="muted"><s>$${p.oldPrice.toFixed(2)}</s></div>`:''}</div>
+          <div style="display:flex;flex-direction:column;gap:8px;width:45%">
+            <button data-id="${p.id}" class="small-btn alt view-btn">View Product</button>
+            <div style="display:flex;gap:8px"><button data-id="${p.id}" class="small-btn primary add-cart">Add to Cart</button><button data-id="${p.id}" class="small-btn" onclick="quickBuy('${p.id}')">Buy</button></div>
+          </div>
+        </div>
+      `;
+      return div;
+    }
+
+    function renderGrids(filter=''){
+      const tgrid = $('#tshirts-grid'); const pgrid = $('#pants-grid'); tgrid.innerHTML=''; pgrid.innerHTML='';
+      const term = filter.trim().toLowerCase();
+      products.forEach(p=>{
+        if(term){
+          if(!(p.name.toLowerCase().includes(term) || p.category.includes(term))) return;
+        }
+        const card = createCard(p);
+        if(p.category==='tshirt') tgrid.appendChild(card); else pgrid.appendChild(card);
+      });
+    }
+
+    // Cart
+    function getCart(){return JSON.parse(localStorage.getItem('bm_cart')||'[]')}
+    function saveCart(c){localStorage.setItem('bm_cart',JSON.stringify(c))}
+    function addToCart(productId,qty=1){
+      const cart = getCart(); const p = products.find(x=>x.id===productId); if(!p) return;
+      const existing = cart.find(i=>i.id===productId);
+      if(existing){existing.qty += qty;} else cart.push({id:productId,qty:qty});
+      saveCart(cart); updateCartUI();
+    }
+    function removeFromCart(productId){let cart=getCart();cart=cart.filter(i=>i.id!==productId);saveCart(cart);updateCartUI();}
+    function updateCartQty(productId,qty){let cart=getCart();const it=cart.find(i=>i.id===productId);if(it){it.qty=qty; if(it.qty<1) removeFromCart(productId); saveCart(cart); updateCartUI();}}
+
+    function updateCartUI(){
+      const items = getCart(); const container = $('#cart-items'); container.innerHTML=''; let total=0;
+      items.forEach(it=>{const p = products.find(x=>x.id===it.id); if(!p) return; const row = document.createElement('div'); row.className='cart-item'; row.innerHTML = `
+        <img src="${p.img}" />
+        <div style="flex:1">
+          <div style="font-weight:700">${p.name}</div>
+          <div class="muted">$${p.price.toFixed(2)} x <input value="${it.qty}" style="width:46px;padding:4px;border-radius:6px;border:1px solid #eee" data-id="${p.id}" class="cart-qty"/></div>
+        </div>
+        <div style="text-align:right"><div style="font-weight:700">$${(p.price*it.qty).toFixed(2)}</div><div><button data-id="${p.id}" class="small-btn" style="margin-top:8px">Remove</button></div></div>
+      `; container.appendChild(row); total += p.price*it.qty;});
+      $('#cart-total').textContent = `$${total.toFixed(2)}`;
+      // attach qty/change handlers
+      $$('.cart-qty').forEach(el=>el.addEventListener('change',e=>{const id=e.target.dataset.id; const val=parseInt(e.target.value)||1; updateCartQty(id,val)}));
+      $$('.cart-item .small-btn').forEach(b=>b.addEventListener('click',e=>removeFromCart(e.currentTarget.dataset.id)));
+    }
+
+    // View product
+    function openModal(productId){
+      const p = products.find(x=>x.id===productId); if(!p) return; $('#modal-image').style.backgroundImage = `url('${p.img}')`;
+      $('#modal-title').textContent = p.name; $('#modal-rating').textContent = `⭐ ${p.rating}`; $('#modal-badge').textContent = p.badge||'';
+      $('#modal-price').innerHTML = `$${p.price.toFixed(2)} ${p.oldPrice?`<span class="muted"><s>$${p.oldPrice.toFixed(2)}</s></span>`:''}`;
+      $('#modal-desc').textContent = p.desc; $('#modal-specs').innerHTML = `<li>Material: 100% Cotton</li><li>Made for everyday wear</li><li>Care: Machine wash</li>`;
+      // sizes
+      const so = $('#size-options'); so.innerHTML=''; p.sizes.forEach(s=>{const b=document.createElement('button');b.className='small-btn alt';b.textContent=s; b.addEventListener('click',()=>{$$('#size-options .small-btn').forEach(x=>x.style.background=''); b.style.background='var(--accent)'; b.style.color='white'}); so.appendChild(b)});
+      // colors
+      const co = $('#color-options'); co.innerHTML=''; p.colors.forEach(c=>{const b=document.createElement('button');b.className='small-btn alt';b.textContent=c; b.addEventListener('click',()=>{$$('#color-options .small-btn').forEach(x=>x.style.background=''); b.style.background='black'; b.style.color='white'}); co.appendChild(b)});
+      $('#modal-qty').value = 1;
+      $('#product-modal').classList.add('open');
+      // wire add to cart
+      $('#modal-add').onclick = ()=>{ addToCart(p.id, parseInt($('#modal-qty').value)||1); alert('Added to cart'); };
+      // buy now opens checkout flow using this product
+      $('#buy-now-btn').onclick = ()=>{ startCheckout(p.id, parseInt($('#modal-qty').value)||1); };
+    }
+
+    $('#modal-close').addEventListener('click',()=>$('#product-modal').classList.remove('open'));
+
+    // Quick buy from card (goes to product detail then checkout)
+    function quickBuy(id){ openModal(id); }
+
+    // Click handlers delegated for product view/add/cart
+    document.addEventListener('click',e=>{
+      if(e.target.matches('.view-btn')){ const id=e.target.dataset.id; openModal(id); }
+      if(e.target.matches('.add-cart')){ const id=e.target.dataset.id; addToCart(id,1); alert('Added to cart'); }
+    });
+
+    // Cart toggle
+    $('#cart-btn').addEventListener('click',()=>{$('#cart').classList.toggle('open'); updateCartUI();});
+
+    // Search
+    $('#search-input').addEventListener('input',e=>{ renderGrids(e.target.value); });
+
+    // Shop shortcuts
+    $('#shop-tee').addEventListener('click',()=>{ window.scrollTo({top: document.getElementById('tshirts-section').offsetTop-80, behavior:'smooth'})});
+    $('#shop-pants').addEventListener('click',()=>{ window.scrollTo({top: document.getElementById('pants-section').offsetTop-80, behavior:'smooth'})});
+
+    // Checkout flow state
+    let checkoutProduct=null; let checkoutQty=1;
+    function startCheckout(productId, qty=1){
+      checkoutProduct = products.find(x=>x.id===productId);
+      checkoutQty = qty;
+      // populate order summary
+      $('#order-summary').innerHTML = `<div style="display:flex;gap:10px;align-items:center"><img src="${checkoutProduct.img}" style="width:64px;height:64px;border-radius:8px;object-fit:cover" /><div><div style="font-weight:700">${checkoutProduct.name}</div><div class="muted">Qty: ${checkoutQty}</div></div><div style="margin-left:auto;font-weight:800">$${(checkoutProduct.price*checkoutQty).toFixed(2)}</div></div><div style="margin-top:8px">Delivery: $5.00</div>`;
+      // show checkout screen
+      showScreen('checkout-screen');
+      window.scrollTo({top: document.getElementById('screens').offsetTop-40, behavior:'smooth'});
+      $('#checkout-btn').onclick = ()=>{
+        // populate payment
+        const orderId = 'ORDER-'+Math.random().toString(36).slice(2,10).toUpperCase();
+        $('#pay-order-id').textContent = orderId; $('#pay-amount').textContent = `$${(checkoutProduct.price*checkoutQty + 5).toFixed(2)}`;
+        $('#pay-order').innerHTML = `<div style="font-weight:700">${checkoutProduct.name}</div><div class="muted">Qty: ${checkoutQty}</div><div style="margin-top:8px;font-weight:800">Total: $${(checkoutProduct.price*checkoutQty + 5).toFixed(2)}</div>`;
+        // store temp
+        window._demoOrder = {orderId,product:checkoutProduct,qty:checkoutQty,total: (checkoutProduct.price*checkoutQty + 5)};
+        showScreen('payment-screen');
+      };
+    }
+
+    function showScreen(id){ Array.from(document.querySelectorAll('.screen')).forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+
+    // pay now
+    $('#pay-now-btn').addEventListener('click',()=>{
+      const order = window._demoOrder || {orderId:'ORDER-XXXX',total:0};
+      // simulate success
+      const fake = 'BM-'+Math.random().toString(36).slice(2,9).toUpperCase();
+      $('#success-order').textContent = fake; showScreen('success-screen');
+      // clear cart
+      localStorage.removeItem('bm_cart'); updateCartUI();
+    });
+
+    // Checkout from cart
+    $('#checkout-from-cart').addEventListener('click',()=>{
+      const cart = getCart(); if(cart.length===0){alert('Cart is empty'); return;} const first = cart[0]; startCheckout(first.id, first.qty); $('#cart').classList.remove('open');
+    });
+
+    // initial
+    renderGrids(); updateCartUI();
+
+    // small defensive: prevent any real network payments
+    // (no-op) all payment is simulated in-memory
+  </script>
+</body>
+</html>
