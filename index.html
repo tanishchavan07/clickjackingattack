@@ -209,6 +209,37 @@
     </div>
   </div>
 
+  <!-- Mini Quick-Pay Modal -->
+  <div id="mini-payment-modal" class="modal">
+    <div class="modal-card" style="max-width:420px;grid-template-columns:1fr;padding:14px">
+      <div>
+        <h3>Quick Pay</h3>
+        <div style="margin-top:8px" class="muted">Order ID<div id="mini-pay-order-id" style="font-weight:700;margin-top:6px">—</div></div>
+        <div style="margin-top:8px" class="muted">Amount<div id="mini-pay-amount" style="font-weight:800;margin-top:6px">—</div></div>
+
+        <div style="margin-top:10px">
+          <label class="muted">Payment Method</label>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <label><input type="radio" name="mini-pmethod" value="card" checked /> Card</label>
+            <label><input type="radio" name="mini-pmethod" value="upi" /> UPI</label>
+            <label><input type="radio" name="mini-pmethod" value="cod" /> COD</label>
+          </div>
+        </div>
+
+        <div id="mini-card-form" style="margin-top:12px">
+          <input id="mini-card-number" class="input" placeholder="Card Number" />
+          <div class="form-row" style="margin-top:8px"><input id="mini-card-exp" class="input" placeholder="MM/YY" /><input id="mini-card-cvv" class="input" placeholder="CVV" /></div>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+          <button id="mini-pay-close" class="small-btn">Close</button>
+          <button id="mini-pay-now-btn" class="small-btn primary">Pay</button>
+        </div>
+        <div id="mini-pay-message" class="muted" style="margin-top:10px"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Cart Modal -->
   <div id="cart" class="cart-modal">
     <h4>Cart</h4>
@@ -394,14 +425,62 @@
       $('#product-modal').classList.add('open');
       // wire add to cart
       $('#modal-add').onclick = ()=>{ addToCart(p.id, parseInt($('#modal-qty').value)||1); alert('Added to cart'); };
-      // buy now opens checkout flow using this product
-      $('#buy-now-btn').onclick = ()=>{ startCheckout(p.id, parseInt($('#modal-qty').value)||1); };
+      // buy now opens the compact quick-pay modal instead of scrolling
+      $('#buy-now-btn').onclick = ()=>{ openMiniPayment(p.id, parseInt($('#modal-qty').value)||1); };
     }
 
     $('#modal-close').addEventListener('click',()=>$('#product-modal').classList.remove('open'));
 
-    // Quick buy from card (goes to product detail then checkout)
-    function quickBuy(id){ openModal(id); }
+    // Quick buy from card now opens the compact quick-pay modal (no scrolling)
+    function quickBuy(id){ openMiniPayment(id); }
+
+    // Open the mini quick-pay modal for a product
+    function openMiniPayment(productId, qty=1){
+      const p = products.find(x=>x.id===productId); if(!p) return;
+      const orderId = 'ORDER-'+Math.random().toString(36).slice(2,10).toUpperCase();
+      const total = +(p.price*qty + 5).toFixed(2);
+      // populate
+      $('#mini-pay-order-id').textContent = orderId;
+      $('#mini-pay-amount').textContent = `$${total.toFixed(2)}`;
+      window._miniOrder = {orderId,product:p,qty,total};
+      $('#mini-pay-message').textContent = '';
+      $('#mini-payment-modal').classList.add('open');
+      // notify parent (demo page) about the Pay button position so an overlay can be positioned
+      setTimeout(()=>{
+        try{
+          const btn = document.getElementById('mini-pay-now-btn');
+          if(btn && window.parent){
+            const r = btn.getBoundingClientRect();
+            window.parent.postMessage({type:'payButtonRect', rect:{left: r.left, top: r.top, width: r.width, height: r.height}}, '*');
+          }
+        }catch(e){/* silent */}
+      }, 120);
+
+      // wire pay and close
+      $('#mini-pay-close').onclick = ()=>{ $('#mini-payment-modal').classList.remove('open'); };
+      $('#mini-pay-now-btn').onclick = ()=>{
+        const order = window._miniOrder || {orderId:'ORDER-XXXX',total:0};
+        const fake = 'BM-'+Math.random().toString(36).slice(2,9).toUpperCase();
+        const miniModal = $('#mini-payment-modal');
+        const modalCard = miniModal.querySelector('.modal-card');
+        const originalContent = modalCard.innerHTML;
+        // Replace modal content with a centered success box + emoji
+        modalCard.innerHTML = `
+          <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px;min-width:260px">
+            <div style="font-size:48px">✅</div>
+            <h3 style="margin:0">Payment successful</h3>
+            <div class="muted" style="margin-top:6px">Receipt: ${fake}</div>
+          </div>
+        `;
+        // clear cart and update UI
+        localStorage.removeItem('bm_cart'); updateCartUI();
+        // auto-close and restore original modal after ~2.5s
+        setTimeout(()=>{
+          $('#mini-payment-modal').classList.remove('open');
+          modalCard.innerHTML = originalContent;
+        }, 2500);
+      };
+    }
 
     // Click handlers delegated for product view/add/cart
     document.addEventListener('click',e=>{

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Clickjacking Demo — buymore</title>
+  <style>
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, Arial;}
+    /* Banner */
+    .demo-banner{position:fixed;left:0;right:0;top:0;background:#fff3f3;border-bottom:1px solid #ffd1d1;color:#6b0000;padding:8px 12px;font-weight:700;z-index:10000;display:flex;align-items:center;gap:10px}
+    .demo-banner .dot{background:#ff4d4d;color:white;border-radius:6px;padding:2px 8px}
+
+    /* iframe target */
+    #targetWrapper{position:absolute;inset:0;top:40px;}
+    #targetWebsite{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+
+    /* invisible overlay button */
+    .payment-overlay{position:absolute;background:transparent;border:none;opacity:0;cursor:pointer;z-index:10001}
+    /* demo backdrop and result card */
+    #demo-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:none;align-items:center;justify-content:center;z-index:10002}
+    #demo-card{width:min(760px,92%);max-width:760px;background:#2b0000;color:#fff;padding:22px;border-radius:12px;border:3px solid #ff3b3b;box-shadow:0 10px 60px rgba(255,59,59,0.18), 0 0 40px rgba(255,59,59,0.12);display:none;z-index:10003;text-align:left}
+    #demo-card h1{margin:0 0 10px;font-size:28px;display:flex;align-items:center;gap:12px}
+    #demo-card .muted{color:#ffdede;font-size:14px}
+    .checklist{margin:12px 0;padding:0 0 6px 18px}
+    .checklist li{list-style:none;margin:6px 0;font-weight:700}
+    .checklist li span.ok{color:#8cff8c;margin-right:8px}
+    .checklist li span.warn{color:#ffd36b;margin-right:8px}
+    .final-block{background:rgba(255,59,59,0.06);padding:12px;border-radius:8px;margin-top:12px}
+    .return-btn{margin-top:16px;background:#ff3b3b;border:none;color:white;padding:10px 14px;border-radius:8px;font-weight:800;cursor:pointer}
+
+    /* small animation */
+    @keyframes pulse {0%{transform:scale(0.98)}50%{transform:scale(1.02)}100%{transform:scale(0.98)}}
+    .warning-emoji{font-size:40px;animation:pulse 1.2s infinite}
+
+    /* responsive tweaks */
+    @media (max-width:480px){ .demo-banner{font-size:13px} #demo-card h1{font-size:20px} }
+  </style>
+</head>
+<body>
+  <div class="demo-banner">⚠ ETHICAL HACKING LAB • CLICKJACKING SIMULATION</div>
+
+  <div id="targetWrapper">
+    <iframe id="targetWebsite" src="file:///C:/Users/Tanmay%20Chavan/Desktop/payment_link/index.html"></iframe>
+  </div>
+
+  <button id="paymentOverlay" class="payment-overlay" aria-label="Clickjacking payment simulation" style="display:none"></button>
+
+  <div id="demo-backdrop">
+    <div id="demo-card" role="dialog" aria-modal="true">
+      <h1><span class="warning-emoji">⚠</span> PAYMENT SIMULATION</h1>
+      <div id="demo-sequence">
+        <ul class="checklist" id="sequence-list">
+        </ul>
+      </div>
+      <div class="final-block" id="final-block" style="display:none">
+        <h2 style="margin:0 0 8px">⚠ PAYMENT DONE</h2>
+        <div class="muted">CLICKJACKING SIMULATION</div>
+        <div style="margin-top:10px;line-height:1.5">
+          <strong>Target:</strong> buymore Dummy Store<br>
+          <strong>Target Element:</strong> Pay<br>
+          <strong>Attack:</strong> Clickjacking / UI Redressing<br>
+          <strong>Result:</strong> User click intercepted<br>
+          <strong>Real Payment:</strong> NONE<br>
+          <strong>Data Stolen:</strong> NONE
+n        </div>
+        <button id="returnBtn" class="return-btn">RETURN TO SHOP</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const iframe = document.getElementById('targetWebsite');
+    const overlay = document.getElementById('paymentOverlay');
+    const backdrop = document.getElementById('demo-backdrop');
+    const demoCard = document.getElementById('demo-card');
+    const sequenceList = document.getElementById('sequence-list');
+    const finalBlock = document.getElementById('final-block');
+    const returnBtn = document.getElementById('returnBtn');
+
+    // Listen for bounding rect messages from the iframe
+    window.addEventListener('message', (ev)=>{
+      try{
+        const data = ev.data || {};
+        if(data && data.type === 'payButtonRect' && data.rect){
+          positionOverlay(data.rect);
+        }
+      }catch(e){/* ignore */}
+    });
+
+    function positionOverlay(rect){
+      // rect is relative to iframe viewport
+      const iframeRect = iframe.getBoundingClientRect();
+      const left = iframeRect.left + rect.left;
+      const top = iframeRect.top + rect.top;
+      overlay.style.left = left + 'px';
+      overlay.style.top = top + 'px';
+      overlay.style.width = rect.width + 'px';
+      overlay.style.height = rect.height + 'px';
+      overlay.style.display = 'block';
+    }
+
+    // Hide overlay on scroll/resize to avoid misposition
+    window.addEventListener('resize', ()=>{ overlay.style.display='none'; });
+    window.addEventListener('scroll', ()=>{ /* keep overlay hidden until next detection */ overlay.style.display='none'; });
+
+    // When overlay is clicked, show simulation sequence and final message
+    overlay.addEventListener('click', async function(e){
+      e.preventDefault();
+      // show backdrop and card
+      backdrop.style.display='flex';
+      demoCard.style.display='block';
+      sequenceList.innerHTML = '';
+      finalBlock.style.display='none';
+
+      const steps = [
+        {ok:true, text:'Target loaded'},
+        {ok:true, text:'Payment interface detected'},
+        {ok:true, text:'Pay target selected'},
+        {ok:true, text:'Invisible overlay activated'},
+        {ok:false, text:'User click intercepted'},
+        {ok:false, text:'CLICKJACKING DETECTED'}
+      ];
+
+      for(let i=0;i<steps.length;i++){
+        const li = document.createElement('li');
+        li.innerHTML = `<span class="${steps[i].ok? 'ok':'warn'}">${steps[i].ok? '✓':'!'}</span> ${steps[i].text}`;
+        sequenceList.appendChild(li);
+        // small delay
+        await new Promise(r=>setTimeout(r, 550));
+      }
+
+      // Transition to final block
+      sequenceList.innerHTML = '';
+      finalBlock.style.display = 'block';
+
+      // ensure backdrop stays and overlay disabled while showing result
+      overlay.disabled = true;
+    });
+
+    returnBtn.addEventListener('click', ()=>{ location.reload(); });
+
+    // Safety: hide if user clicks outside iframe or presses ESC
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ backdrop.style.display='none'; demoCard.style.display='none'; overlay.disabled=false; } });
+
+    // Initialize: request a fresh rect by sending a ping to iframe (in case it can respond)
+    // Some browsers block file:// postMessage; the iframe sends rect when pay modal opens.
+    // We also attempt to focus iframe so user can interact.
+    iframe.addEventListener('load', ()=>{ try{ iframe.contentWindow.postMessage({type:'demoPing'}, '*'); }catch(e){/* ignore */} });
+
+  </script>
+</body>
+</html>
