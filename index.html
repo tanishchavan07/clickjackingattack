@@ -83,6 +83,16 @@
     .input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6e6e6}
     .summary{background:#fff; padding:12px;border-radius:12px;box-shadow:var(--shadow)}
 
+    /* Authentication modal */
+    .auth-modal{position:fixed;inset:0;background:rgba(11,11,11,0.5);display:none;align-items:center;justify-content:center;padding:24px;z-index:110;animation:fadeIn .2s ease-out}
+    .auth-modal.open{display:flex}
+    @keyframes fadeIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+    .auth-card{width:100%;max-width:420px;background:var(--card);border-radius:18px;padding:30px;box-shadow:0 20px 60px rgba(11,11,11,.18)}
+    .auth-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.auth-header h2{margin:0;font-size:22px}.auth-close{background:transparent;border:0;font-size:25px;cursor:pointer;color:var(--muted);padding:0 4px}.auth-close:hover{color:var(--text)}
+    .auth-tabs{display:flex;border-bottom:1px solid #e6e6e6;margin-bottom:22px}.auth-tab{flex:1;background:transparent;border:0;border-bottom:2px solid transparent;padding:11px;color:var(--muted);font-weight:700;cursor:pointer}.auth-tab.active{color:var(--accent-dark);border-bottom-color:var(--accent)}
+    .auth-content{display:none}.auth-content.active{display:block}.auth-form-group{margin-bottom:15px}.auth-label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}.auth-input{width:100%;padding:12px;border:1px solid #e6e6e6;border-radius:10px;font:inherit;transition:border-color .2s}.auth-input:focus{outline:none;border-color:var(--accent)}.auth-input.error{border-color:#ef476f}.auth-error{display:none;color:#d6284b;font-size:12px;margin-top:5px}.auth-error.show{display:block}.auth-btn{width:100%;padding:12px;background:var(--accent);border:0;border-radius:10px;color:white;font-weight:700;cursor:pointer;box-shadow:0 5px 14px rgba(199,125,255,.2)}.auth-btn:hover{background:var(--accent-dark)}.auth-link{text-align:center;color:var(--muted);font-size:13px;margin-top:16px}.auth-link button{background:transparent;border:0;color:var(--accent-dark);cursor:pointer;font:inherit;font-weight:700;padding:0}.auth-success{display:none;background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:14px;text-align:center;color:#166534;font-size:13px;line-height:1.5;margin-bottom:15px}.auth-success.show{display:block}
+    .user-menu{position:relative}.user-dropdown{position:absolute;right:0;top:calc(100% + 6px);display:none;min-width:140px;background:var(--card);border-radius:10px;box-shadow:var(--shadow);padding:6px;z-index:70}.user-dropdown.open{display:block}.user-dropdown button{width:100%;padding:9px 10px;text-align:left;background:transparent;border:0;cursor:pointer;border-radius:7px}.user-dropdown button:hover{background:#f3f3f4}
+
     footer{max-width:1200px;margin:36px auto;color:var(--muted);padding:26px 20px}
 
     /* Responsive */
@@ -123,6 +133,13 @@
         <div class="search"><input id="search-input" placeholder="Search products..." style="border:0;outline:none;min-width:200px;background:transparent"/></div>
         <button class="icon-btn" id="cart-btn" title="Cart">🛒</button>
         <button class="icon-btn" id="login-btn">Login</button>
+        <div class="user-menu" id="user-menu" style="display:none">
+          <button class="icon-btn" id="user-display" type="button">Hi, username</button>
+          <div class="user-dropdown" id="user-dropdown">
+            <button id="my-account-btn" type="button">My Account</button>
+            <button id="logout-btn" type="button">Logout</button>
+          </div>
+        </div>
       </div>
     </div>
   </header>
@@ -251,6 +268,36 @@
     <div style="margin-top:12px;display:flex;gap:8px">
       <button id="view-cart-btn" class="small-btn alt">View</button>
       <button id="checkout-from-cart" class="small-btn primary">Checkout</button>
+    </div>
+  </div>
+
+  <!-- Authentication Modal -->
+  <div id="auth-modal" class="auth-modal" aria-hidden="true">
+    <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+      <div class="auth-header"><h2 id="auth-title">Welcome Back</h2><button class="auth-close" id="auth-close-btn" type="button" aria-label="Close">×</button></div>
+      <div class="auth-tabs"><button class="auth-tab active" id="login-tab-btn" type="button">Login</button><button class="auth-tab" id="signup-tab-btn" type="button">Create Account</button></div>
+
+      <div id="login-content" class="auth-content active">
+        <div id="login-success-msg" class="auth-success">✓ Login successful<br>Welcome back, username!</div>
+        <form id="login-form">
+          <div class="auth-form-group"><label class="auth-label" for="login-username">Username</label><input id="login-username" type="text" class="auth-input" placeholder="Username"><div id="login-username-error" class="auth-error"></div></div>
+          <div class="auth-form-group"><label class="auth-label" for="login-password">Password</label><input id="login-password" type="password" class="auth-input" placeholder="Password"><div id="login-password-error" class="auth-error"></div></div>
+          <div id="login-form-error" class="auth-error"></div>
+          <button id="login-submit" class="auth-btn" type="submit">Login</button>
+        </form>
+        <div class="auth-link">Don't have an account? <button id="switch-to-signup" type="button">Create Account</button></div>
+      </div>
+
+      <div id="signup-content" class="auth-content">
+        <div id="signup-success-msg" class="auth-success"></div>
+        <form id="signup-form">
+          <div class="auth-form-group"><label class="auth-label" for="register-email">Email ID</label><input id="register-email" type="email" class="auth-input" placeholder="Email ID"><div id="register-email-error" class="auth-error"></div></div>
+          <div class="auth-form-group"><label class="auth-label" for="register-username">Username</label><input id="register-username" type="text" class="auth-input" placeholder="Username"><div id="register-username-error" class="auth-error"></div></div>
+          <div class="auth-form-group"><label class="auth-label" for="register-password">Password</label><input id="register-password" type="password" class="auth-input" placeholder="Password"><div id="register-password-error" class="auth-error"></div></div>
+          <button id="register-submit" class="auth-btn" type="submit">Create Account</button>
+        </form>
+        <div class="auth-link">Already have an account? <button id="switch-to-login" type="button">Login</button></div>
+      </div>
     </div>
   </div>
 
@@ -538,6 +585,126 @@
 
     // initial
     renderGrids(); updateCartUI();
+
+    // ===============================
+    // DEMO AUTHENTICATION
+    // ===============================
+    // DEMO ONLY — never store plaintext passwords like this
+    // in a production application.
+    const AUTH_STORAGE_KEY = 'buymore_user';
+    const AUTH_SESSION_KEY = 'buymore_session';
+    const authModal = $('#auth-modal');
+
+    function clearAuthErrors() {
+      $$('.auth-error').forEach(error => { error.textContent = ''; error.classList.remove('show'); });
+      $$('.auth-input').forEach(input => input.classList.remove('error'));
+    }
+
+    function showAuthError(fieldId, message) {
+      const field = $(fieldId);
+      const error = $(`${fieldId}-error`);
+      field.classList.add('error');
+      error.textContent = message;
+      error.classList.add('show');
+    }
+
+    function switchAuthTab(tab) {
+      const loginActive = tab === 'login';
+      $('#login-content').classList.toggle('active', loginActive);
+      $('#signup-content').classList.toggle('active', !loginActive);
+      $('#login-tab-btn').classList.toggle('active', loginActive);
+      $('#signup-tab-btn').classList.toggle('active', !loginActive);
+      $('#auth-title').textContent = loginActive ? 'Welcome Back' : 'Create Account';
+      clearAuthErrors();
+    }
+
+    function openAuthModal(tab = 'login') {
+      switchAuthTab(tab);
+      authModal.classList.add('open');
+      authModal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeAuthModal() {
+      authModal.classList.remove('open');
+      authModal.setAttribute('aria-hidden', 'true');
+    }
+
+    function updateLoggedInHeader(username) {
+      $('#login-btn').style.display = 'none';
+      $('#user-menu').style.display = 'block';
+      $('#user-display').textContent = `Hi, ${username}`;
+    }
+
+    function updateLoggedOutHeader() {
+      $('#login-btn').style.display = 'block';
+      $('#user-menu').style.display = 'none';
+      $('#user-dropdown').classList.remove('open');
+    }
+
+    $('#login-btn').addEventListener('click', () => openAuthModal());
+    $('#auth-close-btn').addEventListener('click', closeAuthModal);
+    $('#auth-modal').addEventListener('click', event => { if (event.target === authModal) closeAuthModal(); });
+    $('#login-tab-btn').addEventListener('click', () => switchAuthTab('login'));
+    $('#signup-tab-btn').addEventListener('click', () => switchAuthTab('signup'));
+    $('#switch-to-signup').addEventListener('click', () => openAuthModal('signup'));
+    $('#switch-to-login').addEventListener('click', () => openAuthModal('login'));
+    $('#user-display').addEventListener('click', () => $('#user-dropdown').classList.toggle('open'));
+    $('#my-account-btn').addEventListener('click', () => { $('#user-dropdown').classList.remove('open'); openAuthModal('login'); });
+    $('#logout-btn').addEventListener('click', () => {
+      localStorage.removeItem(AUTH_SESSION_KEY);
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+      updateLoggedOutHeader();
+    });
+
+    $('#signup-form').addEventListener('submit', event => {
+      event.preventDefault();
+      clearAuthErrors();
+      const email = $('#register-email').value.trim();
+      const username = $('#register-username').value.trim();
+      const password = $('#register-password').value;
+      let valid = true;
+      if (!email) { showAuthError('#register-email', 'Please enter your email address.'); valid = false; }
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showAuthError('#register-email', 'Please enter a valid email address.'); valid = false; }
+      if (!username) { showAuthError('#register-username', 'Please enter a username.'); valid = false; }
+      else if (username.length < 3) { showAuthError('#register-username', 'Username must contain at least 3 characters.'); valid = false; }
+      if (!password) { showAuthError('#register-password', 'Please enter a password.'); valid = false; }
+      else if (password.length < 6) { showAuthError('#register-password', 'Password must contain at least 6 characters.'); valid = false; }
+      if (!valid) return;
+      if (localStorage.getItem(AUTH_STORAGE_KEY)) { showAuthError('#register-email', 'An account already exists. Please login.'); return; }
+
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ email, username, password }));
+      $('#signup-success-msg').innerHTML = `✓ Account Created Successfully<br><br>Welcome to buymore, ${username}!<br><br><span class="muted">You can now login using your username and password.</span>`;
+      $('#signup-success-msg').classList.add('show');
+      $('#signup-form').reset();
+      setTimeout(() => { $('#signup-success-msg').classList.remove('show'); openAuthModal('login'); }, 1500);
+    });
+
+    $('#login-form').addEventListener('submit', event => {
+      event.preventDefault();
+      clearAuthErrors();
+      const username = $('#login-username').value.trim();
+      const password = $('#login-password').value;
+      const accountData = localStorage.getItem(AUTH_STORAGE_KEY);
+      let account = null;
+      try { account = accountData ? JSON.parse(accountData) : null; } catch (error) { account = null; }
+      if (!account || account.username !== username || account.password !== password) {
+        const error = $('#login-form-error');
+        error.textContent = 'Invalid username or password';
+        error.classList.add('show');
+        return;
+      }
+      localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify({ username: account.username }));
+      $('#login-success-msg').innerHTML = `✓ Login successful<br>Welcome back, ${account.username}!`;
+      $('#login-success-msg').classList.add('show');
+      updateLoggedInHeader(account.username);
+      setTimeout(closeAuthModal, 900);
+    });
+
+    const savedSession = localStorage.getItem(AUTH_SESSION_KEY);
+    if (savedSession) {
+      try { const session = JSON.parse(savedSession); if (session.username) updateLoggedInHeader(session.username); }
+      catch (error) { localStorage.removeItem(AUTH_SESSION_KEY); }
+    }
 
     // small defensive: prevent any real network payments
     // (no-op) all payment is simulated in-memory

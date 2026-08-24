@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Keystroke Logging Simulation</title>
+  <style>
+    :root{font-family:"Courier New",monospace;color:#e8f2f2;background:#08151b;--line:#23515b;--green:#5de0a5;--red:#ff647c;--muted:#9bb3b6}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;padding:28px;background:radial-gradient(circle at top right,#183d42 0,#08151b 45%)}main{max-width:1120px;margin:auto}.eyebrow{color:var(--green);font-size:12px;letter-spacing:2px;font-weight:bold}.masthead{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:22px}.masthead h1{font-size:clamp(25px,5vw,48px);margin:12px 0 6px;color:#fff}.subtitle{color:var(--muted);margin:0}.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}.panel{background:rgba(16,38,45,.94);border:1px solid var(--line);padding:20px;border-radius:8px;box-shadow:0 15px 40px #0005}.panel h2{font-size:14px;letter-spacing:1px;margin:0 0 16px;color:var(--green)}.status{display:flex;align-items:center;gap:10px;padding:12px;background:#0b1c21;border:1px solid var(--line);border-radius:6px;font-weight:bold}.dot{color:var(--green)}.status.active{color:var(--red);border-color:#713543}.status.active .dot{color:var(--red)}.status.stopped{color:#b5c0c2}.status.stopped .dot{color:#aab3b5}.counter{font-size:40px;font-weight:bold;color:var(--green);margin:18px 0 2px}.muted{color:var(--muted);font-size:12px}.keys{min-height:72px;padding:16px;background:#071116;border:1px solid var(--line);color:#fff;font-size:22px;line-height:1.8;word-break:break-word}.key{display:inline-block;margin-right:10px}.empty{color:var(--muted);font-size:13px}.terminal{height:250px;overflow:auto;padding:14px;background:#050b0e;border:1px solid #1f4147;color:var(--green);font-size:13px;line-height:1.7}.terminal-line{border-bottom:1px solid #123039;padding:2px 0}.controls{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}button{border:1px solid var(--green);background:#143c3b;color:#dfffee;padding:10px 14px;border-radius:5px;font:inherit;font-weight:bold;cursor:pointer}button:hover{background:#1b5650}button.danger{border-color:var(--red);background:#401d29}.analysis{display:none;margin-top:18px}.analysis.show{display:block}.fact{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}.fact span:first-child{color:var(--muted)}.safe{color:var(--green)}.field-counts{margin-top:16px}.field-count{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;padding:5px 0}.info{margin-top:18px}.info p,.info li{color:var(--muted);font:13px/1.7 system-ui,sans-serif}.info ul{padding-left:20px}footer{text-align:center;color:var(--muted);font-size:11px;margin:28px 0}@media(max-width:760px){body{padding:18px}.grid{grid-template-columns:1fr}.terminal{height:210px}}
+  </style>
+</head>
+<body>
+  <main>
+    <header class="masthead"><div class="eyebrow">AUTHORIZED SECURITY DEMONSTRATION</div><h1>⌨ KEYSTROKE LOGGING SIMULATION</h1><p class="subtitle">Educational Ethical Hacking Lab</p></header>
+    <div class="grid">
+      <section class="panel"><h2>KEYSTROKE MONITOR</h2><div id="keys" class="keys"><span class="empty">No demo keys received.</span></div><div class="counter" id="event-counter">0</div><div class="muted">Events detected</div><div class="field-counts" id="field-counts"></div></section>
+      <section class="panel"><h2>SYSTEM STATUS</h2><div id="status" class="status"><span class="dot">●</span><span id="status-text">🟢 WAITING FOR DEMO</span></div><div class="controls"><button id="start-btn" type="button" style="display:none">Start Monitoring</button><button id="stop-btn" class="danger" type="button">Stop Monitoring</button><button id="clear-btn" type="button">Clear Monitor</button><button id="analysis-btn" type="button">Show Security Analysis</button></div><div id="analysis" class="analysis"><div class="fact"><span>Target</span><strong>buymore Demo Input</strong></div><div class="fact"><span>Monitoring</span><strong>AUTHORIZED DEMONSTRATION</strong></div><div class="fact"><span>Actual Password Captured</span><strong class="safe">NO</strong></div><div class="fact"><span>External Transmission</span><strong class="safe">NONE</strong></div><div class="fact"><span>System-Wide Logging</span><strong class="safe">NO</strong></div></div></section>
+    </div>
+    <section class="panel info"><h2>What is Keystroke Logging?</h2><p>Keystroke logging is the recording of keyboard input. Malicious keyloggers may abuse this technique to obtain sensitive information.</p><h2>THIS DEMO IS SAFE</h2><ul><li>User explicitly enabled the demonstration</li><li>Only the dedicated demo input is monitored</li><li>Password characters are never displayed</li><li>No system-wide keyboard monitoring</li><li>No external server</li><li>No credential theft</li><li>No cookies or tokens</li><li>No data is permanently stored</li></ul></section>
+    <section class="panel" style="margin-top:18px"><h2>KEYSTROKE EVENT LOG</h2><div id="terminal" class="terminal"></div></section>
+    <footer>Local educational simulation. No credentials or keyboard data leave these pages.</footer>
+  </main>
+  <script>
+    const keysEl = document.getElementById('keys');
+    const counterEl = document.getElementById('event-counter');
+    const statusEl = document.getElementById('status');
+    const statusTextEl = document.getElementById('status-text');
+    const fieldCountsEl = document.getElementById('field-counts');
+    const analysisEl = document.getElementById('analysis');
+    let eventCount = 0;
+    let monitoring = true;
+    const fieldCounts = {};
+    const allowedFields = new Set(['keystroke-demo-input','login-username','login-password','register-email','register-username','register-password']);
+    const fieldLabels = { 'login-username': 'Login Username', 'login-password': 'Login Password', 'register-email': 'Register Email', 'register-username': 'Register Username', 'register-password': 'Register Password' };
+    function setStatus(kind, text) { statusEl.className = `status ${kind}`; statusTextEl.textContent = text; }
+    function renderFieldCounts() { fieldCountsEl.innerHTML = Object.entries(fieldCounts).map(([field, count]) => `<div class="field-count"><span>${fieldLabels[field]}</span><strong>${count} events${field.includes('password') ? ' [REDACTED]' : ''}</strong></div>`).join(''); }
+    function addDemoKey(key) {
+      if (!monitoring || typeof key !== 'string' || key.length === 0 || key.length > 32) return;
+      if (keysEl.querySelector('.empty')) keysEl.innerHTML = '';
+      const keyEl = document.createElement('span'); keyEl.className = 'key'; keyEl.textContent = key === ' ' ? '[SPACE]' : key.length > 1 ? `[${key.toUpperCase()}]` : key; keysEl.appendChild(keyEl);
+      eventCount += 1; counterEl.textContent = eventCount;
+      const line = document.createElement('div'); line.className = 'terminal-line'; line.textContent = `[${new Date().toLocaleTimeString([], {hour12:false})}] Demo Input → ${keyEl.textContent}`; document.getElementById('terminal').appendChild(line);
+      setStatus('active', '🔴 KEYSTROKE LOGGING SIMULATION ACTIVE');
+      analysisEl.classList.add('show');
+      document.getElementById('analysis-btn').textContent = 'Hide Security Analysis';
+    }
+    window.onmessage = event => {
+      const data = event.data;
+      const validSource = window.opener && event.source === window.opener;
+      const validOrigin = event.origin === location.origin || (location.protocol === 'file:' && event.origin === 'null');
+      if (!validSource || !validOrigin || !data || typeof data.type !== 'string') return;
+      if (data.type !== 'KEYSTROKE_EVENT' || !allowedFields.has(data.field) || !Number.isInteger(data.eventCount) || data.eventCount < 1) return;
+      if (data.field === 'keystroke-demo-input' && data.redacted === false && typeof data.key === 'string') addDemoKey(data.key);
+      if (data.field !== 'keystroke-demo-input' && data.redacted === true) { fieldCounts[data.field] = data.eventCount; renderFieldCounts(); setStatus('active', '🔴 MONITOR ACTIVE'); }
+    };
+    document.getElementById('clear-btn').addEventListener('click', () => { keysEl.innerHTML = '<span class="empty">No demo keys received.</span>'; document.getElementById('terminal').innerHTML = ''; eventCount = 0; counterEl.textContent = '0'; Object.keys(fieldCounts).forEach(field => delete fieldCounts[field]); renderFieldCounts(); monitoring = true; document.getElementById('stop-btn').style.display = 'block'; document.getElementById('start-btn').style.display = 'none'; setStatus('', '🟢 WAITING FOR DEMO'); });
+    document.getElementById('stop-btn').addEventListener('click', () => { monitoring = false; document.getElementById('stop-btn').style.display = 'none'; document.getElementById('start-btn').style.display = 'block'; setStatus('stopped', '⚪ MONITOR STOPPED'); });
+    document.getElementById('start-btn').addEventListener('click', () => { monitoring = true; document.getElementById('stop-btn').style.display = 'block'; document.getElementById('start-btn').style.display = 'none'; setStatus('', '🟢 WAITING FOR DEMO'); });
+    document.getElementById('analysis-btn').addEventListener('click', event => { analysisEl.classList.toggle('show'); event.currentTarget.textContent = analysisEl.classList.contains('show') ? 'Hide Security Analysis' : 'Show Security Analysis'; });
+  </script>
+</body>
+</html>

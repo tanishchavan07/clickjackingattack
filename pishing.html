@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buymore — Account Verification</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, Arial, sans-serif;
+      background: #f7f7f8;
+      color: #0b0b0b;
+    }
+
+    header {
+      background: white;
+      padding: 14px 30px;
+      box-shadow: 0 1px 8px rgba(0,0,0,.08);
+    }
+
+    .nav {
+      max-width: 1100px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: linear-gradient(135deg,#c77dff,#8a4bd6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+
+    .brand {
+      font-size: 19px;
+      font-weight: 700;
+    }
+
+    .container {
+      min-height: calc(100vh - 73px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 25px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 430px;
+      background: white;
+      padding: 32px;
+      border-radius: 18px;
+      box-shadow: 0 15px 45px rgba(0,0,0,.12);
+    }
+
+    .warning {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #9a3412;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 22px;
+      font-size: 13px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 25px;
+    }
+
+    .subtitle {
+      color: #6b6b6b;
+      font-size: 14px;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 7px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 15px;
+      margin-bottom: 17px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #c77dff;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      border: 0;
+      border-radius: 10px;
+      background: #c77dff;
+      color: white;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #8a4bd6;
+    }
+
+    .small {
+      text-align: center;
+      color: #777;
+      font-size: 12px;
+      margin-top: 18px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo">BM</div>
+    <div class="brand">buymore</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="card">
+
+    <div class="warning">
+      ⚠️ Account verification required
+    </div>
+
+    <h1>Verify Your Account</h1>
+
+    <div class="subtitle">
+      Please sign in to continue using your Buymore account.
+    </div>
+
+    <form id="phishing-form">
+
+      <label for="username">Username</label>
+      <input
+        id="username"
+        type="text"
+        placeholder="Enter username"
+        autocomplete="off"
+        required
+      >
+
+      <label for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        placeholder="Enter password"
+        autocomplete="off"
+        required
+      >
+
+      <button type="submit">
+        Verify Account
+      </button>
+
+    </form>
+
+    <div class="small">
+      Buymore Cybersecurity Training Lab
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+   document.getElementById("phishing-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    // Pass only within this local training demo.
+    const params = new URLSearchParams({
+      username: username,
+      password: password
+    });
+
+    window.location.href = "phishing-result.html?" + params.toString();
+  });
+</script>
+
+</body>
+</html>
