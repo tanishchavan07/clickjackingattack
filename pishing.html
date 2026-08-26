@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Buymore — Account Verification</title>
 
   <style>
@@ -10,202 +11,644 @@
       box-sizing: border-box;
     }
 
+    html,
     body {
       margin: 0;
-      min-height: 100vh;
+      width: 100%;
+      min-height: 100%;
       font-family: Inter, Arial, sans-serif;
       background: #f7f7f8;
       color: #0b0b0b;
     }
 
+    /* =========================
+       DUMMY BU YMORE BACKGROUND
+       ========================= */
+
     header {
+      height: 78px;
       background: white;
-      padding: 14px 30px;
-      box-shadow: 0 1px 8px rgba(0,0,0,.08);
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+      display: flex;
+      align-items: center;
     }
 
     .nav {
-      max-width: 1100px;
+      width: 100%;
+      max-width: 1200px;
       margin: auto;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
     .logo {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
-      background: linear-gradient(135deg,#c77dff,#8a4bd6);
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #c77dff, #8a4bd6);
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      font-weight: bold;
+      font-size: 20px;
+      font-weight: 800;
     }
 
-    .brand {
-      font-size: 19px;
+    .brand-name {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .tagline {
+      font-size: 13px;
+      color: #777;
+      margin-top: 2px;
+    }
+
+    nav {
+      display: flex;
+      gap: 25px;
+      color: #555;
+      font-weight: 600;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+      color: #777;
+    }
+
+    .search {
+      width: 200px;
+      border: 0;
+      outline: 0;
+      font-size: 14px;
+      background: transparent;
+    }
+
+    /* =========================
+       BACKGROUND CONTENT
+       ========================= */
+
+    .hero {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 25px 20px;
+      display: grid;
+      grid-template-columns: 1fr 430px;
+      gap: 25px;
+    }
+
+    .hero-left h1 {
+      font-size: 38px;
+      margin: 70px 0 12px;
+    }
+
+    .hero-left p {
+      color: #777;
+      font-size: 16px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 25px;
+    }
+
+    .hero-btn {
+      border: 0;
+      padding: 13px 20px;
+      border-radius: 12px;
+      background: #c77dff;
+      color: white;
       font-weight: 700;
     }
 
-    .container {
-      min-height: calc(100vh - 73px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 25px;
-    }
-
-    .card {
-      width: 100%;
-      max-width: 430px;
+    .hero-btn.secondary {
       background: white;
-      padding: 32px;
-      border-radius: 18px;
-      box-shadow: 0 15px 45px rgba(0,0,0,.12);
+      color: #8a4bd6;
+      border: 1px solid #e4d5f5;
     }
 
-    .warning {
-      background: #fff7ed;
-      border: 1px solid #fed7aa;
-      color: #9a3412;
-      padding: 12px;
-      border-radius: 10px;
-      margin-bottom: 22px;
-      font-size: 13px;
+    .images {
+      display: flex;
+      gap: 12px;
     }
 
-    h1 {
-      margin: 0 0 8px;
-      font-size: 25px;
+    .image {
+      height: 310px;
+      flex: 1;
+      border-radius: 15px;
+      background-size: cover;
+      background-position: center;
     }
 
-    .subtitle {
-      color: #6b6b6b;
-      font-size: 14px;
+    .image:first-child {
+      background-image: url(
+        "https://images.unsplash.com/photo-1520975912649-4b3bcbf8b1d5?q=80&w=900&auto=format&fit=crop"
+      );
+    }
+
+    .image:last-child {
+      background-image: url(
+        "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=900&auto=format&fit=crop"
+      );
+    }
+
+    /* =========================
+       PHISHING SIMULATION OVERLAY
+       ========================= */
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(83, 36, 171, 0.90),
+          rgba(151, 70, 239, 0.88),
+          rgba(219, 56, 153, 0.82)
+        );
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 20px;
+
+      z-index: 9999;
+    }
+
+    /* =========================
+       LOGIN CARD
+       ========================= */
+
+    .login-card {
+      width: 100%;
+      max-width: 498px;
+
+      background: #ffffff;
+
+      border-radius: 20px;
+
+      padding: 34px 36px;
+
+      box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.25);
+
+      position: relative;
+    }
+
+    .login-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
       margin-bottom: 25px;
+    }
+
+    .login-header h2 {
+      margin: 0;
+      font-size: 27px;
+    }
+
+    .close {
+      border: 0;
+      background: transparent;
+      color: #666;
+
+      font-size: 25px;
+
+      cursor: pointer;
+
+      padding: 0;
+    }
+
+    /* =========================
+       TABS
+       ========================= */
+
+    .tabs {
+      display: flex;
+
+      border-bottom: 1px solid #e5e5e5;
+
+      margin-bottom: 30px;
+    }
+
+    .tab {
+      flex: 1;
+
+      border: 0;
+      background: transparent;
+
+      padding: 13px;
+
+      font-size: 15px;
+
+      font-weight: 700;
+
+      color: #555;
+
+      cursor: pointer;
+
+      border-bottom: 2px solid transparent;
+    }
+
+    .tab.active {
+      color: #9148dd;
+
+      border-bottom-color: #c77dff;
+    }
+
+    /* =========================
+       FORM
+       ========================= */
+
+    .form-group {
+      margin-bottom: 20px;
     }
 
     label {
       display: block;
-      font-size: 13px;
+
+      margin-bottom: 8px;
+
+      font-size: 14px;
+
       font-weight: 700;
-      margin-bottom: 7px;
     }
 
     input {
       width: 100%;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      font-size: 15px;
-      margin-bottom: 17px;
+
+      height: 57px;
+
+      padding: 0 15px;
+
+      border: 1px solid #dedede;
+
+      border-radius: 12px;
+
+      font-size: 16px;
+
+      outline: none;
+
+      transition: 0.2s;
     }
 
     input:focus {
-      outline: none;
       border-color: #c77dff;
+
+      box-shadow:
+        0 0 0 3px rgba(199, 125, 255, 0.12);
     }
 
-    button {
+    /* =========================
+       LOGIN BUTTON
+       ========================= */
+
+    .login-button {
       width: 100%;
-      padding: 13px;
+
+      height: 48px;
+
       border: 0;
-      border-radius: 10px;
-      background: #c77dff;
+
+      border-radius: 11px;
+
+      background: #c276ed;
+
       color: white;
+
+      font-size: 16px;
+
       font-weight: 700;
-      font-size: 15px;
+
       cursor: pointer;
+
+      box-shadow:
+        0 8px 20px rgba(199, 125, 255, 0.25);
+
+      transition: 0.2s;
     }
 
-    button:hover {
-      background: #8a4bd6;
+    .login-button:hover {
+      background: #a855d9;
     }
 
-    .small {
+    /* =========================
+       BOTTOM TEXT
+       ========================= */
+
+    .create-account {
       text-align: center;
+
+      margin-top: 22px;
+
       color: #777;
-      font-size: 12px;
-      margin-top: 18px;
+
+      font-size: 14px;
+    }
+
+    .create-account span {
+      color: #9148dd;
+
+      font-weight: 700;
+    }
+
+    /* =========================
+       TRAINING LABEL
+       ========================= */
+
+    .training-label {
+      position: fixed;
+
+      bottom: 12px;
+
+      left: 50%;
+
+      transform: translateX(-50%);
+
+      color: rgba(255,255,255,.8);
+
+      font-size: 11px;
+
+      z-index: 10000;
+    }
+
+    /* =========================
+       MOBILE
+       ========================= */
+
+    @media (max-width: 700px) {
+
+      nav {
+        display: none;
+      }
+
+      .search {
+        display: none;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .login-card {
+        max-width: 430px;
+
+        padding: 28px 24px;
+      }
+
+      .login-header h2 {
+        font-size: 24px;
+      }
     }
   </style>
 </head>
 
 <body>
 
-<header>
-  <div class="nav">
-    <div class="logo">BM</div>
-    <div class="brand">buymore</div>
+  <!-- =========================
+       DUMMY BU YMORE PAGE
+       ========================= -->
+
+  <header>
+
+    <div class="nav">
+
+      <div class="brand">
+
+        <div class="logo">
+          BM
+        </div>
+
+        <div>
+          <div class="brand-name">
+            buymore
+          </div>
+
+          <div class="tagline">
+            Style that fits you.
+          </div>
+        </div>
+
+      </div>
+
+      <nav>
+        <span>Home</span>
+        <span>T-Shirts</span>
+        <span>Pants</span>
+        <span>New Arrivals</span>
+        <span>Offers</span>
+      </nav>
+
+      <div class="nav-right">
+
+        <input
+          class="search"
+          placeholder="Search products..."
+        >
+
+        <span>🛒</span>
+
+        <span>Login</span>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <section class="hero">
+
+    <div class="hero-left">
+
+      <h1>
+        Upgrade Your Everyday Style
+      </h1>
+
+      <p>
+        Premium T-Shirts and Pants designed
+        for your everyday look.
+      </p>
+
+      <div class="buttons">
+
+        <button class="hero-btn">
+          Shop T-Shirts
+        </button>
+
+        <button class="hero-btn secondary">
+          Shop Pants
+        </button>
+
+      </div>
+
+    </div>
+
+    <div class="images">
+
+      <div class="image"></div>
+      <div class="image"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       PHISHING SIMULATION
+       ========================= -->
+
+  <div class="overlay">
+
+    <div class="login-card">
+
+      <div class="login-header">
+
+        <h2>
+          Welcome Back
+        </h2>
+
+        <button
+          class="close"
+          onclick="closeSimulation()"
+          aria-label="Close"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div class="tabs">
+
+        <button class="tab active">
+          Login
+        </button>
+
+        <button class="tab">
+          Create Account
+        </button>
+
+      </div>
+
+
+      <form id="phishing-form">
+
+        <div class="form-group">
+
+          <label for="username">
+            Username
+          </label>
+
+          <input
+            id="username"
+            type="text"
+            placeholder="Username"
+            autocomplete="off"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="password">
+            Password
+          </label>
+
+          <input
+            id="password"
+            type="password"
+            placeholder="Password"
+            autocomplete="off"
+            required
+          >
+
+        </div>
+
+
+        <button
+          type="submit"
+          class="login-button"
+        >
+          Login
+        </button>
+
+      </form>
+
+
+      <div class="create-account">
+
+        Don't have an account?
+        <span>Create Account</span>
+
+      </div>
+
+    </div>
+
   </div>
-</header>
 
-<div class="container">
 
-  <div class="card">
-
-    <div class="warning">
-      ⚠️ Account verification required
-    </div>
-
-    <h1>Verify Your Account</h1>
-
-    <div class="subtitle">
-      Please sign in to continue using your Buymore account.
-    </div>
-
-    <form id="phishing-form">
-
-      <label for="username">Username</label>
-      <input
-        id="username"
-        type="text"
-        placeholder="Enter username"
-        autocomplete="off"
-        required
-      >
-
-      <label for="password">Password</label>
-      <input
-        id="password"
-        type="password"
-        placeholder="Enter password"
-        autocomplete="off"
-        required
-      >
-
-      <button type="submit">
-        Verify Account
-      </button>
-
-    </form>
-
-    <div class="small">
-      Buymore Cybersecurity Training Lab
-    </div>
-
+  <div class="training-label">
+    Buymore Cybersecurity Training Simulation
   </div>
 
-</div>
 
-<script>
-   document.getElementById("phishing-form").addEventListener("submit", function(event) {
-    event.preventDefault();
+  <script>
 
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+    /*
+     * LOCAL PHISHING-AWARENESS SIMULATION
+     *
+     * The values are not sent to a server.
+     * They are only passed to the local result page.
+     */
 
-    // Pass only within this local training demo.
-    const params = new URLSearchParams({
-      username: username,
-      password: password
-    });
+    document
+      .getElementById("phishing-form")
+      .addEventListener("submit", function(event) {
 
-    window.location.href = "phishing-result.html?" + params.toString();
-  });
-</script>
+        event.preventDefault();
+
+        const username =
+          document.getElementById("username").value;
+
+        const password =
+          document.getElementById("password").value;
+
+        const params = new URLSearchParams();
+
+        params.set("username", username);
+        params.set("password", password);
+
+        window.location.href =
+          "phishing-result.html?" + params.toString();
+
+      });
+
+
+    function closeSimulation() {
+
+      window.location.href = "index.html";
+
+    }
+
+  </script>
 
 </body>
 </html>
