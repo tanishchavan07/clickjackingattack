@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Demo State Bank - Security Simulation</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #eef3f8;
+            color: #17212b;
+        }
+
+        /* Simulation Banner */
+        .simulation-banner {
+            background: #111827;
+            color: #fff;
+            text-align: center;
+            padding: 11px;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .simulation-banner span {
+            color: #ff5252;
+        }
+
+        /* Header */
+        header {
+            height: 75px;
+            background: #07579b;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 7%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+
+        .bank-name {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bank-icon {
+            width: 43px;
+            height: 43px;
+            background: white;
+            color: #07579b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .bank-name h1 {
+            font-size: 22px;
+        }
+
+        .bank-name p {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-top: 3px;
+        }
+
+        .secure {
+            font-size: 13px;
+        }
+
+        /* Main */
+        main {
+            min-height: calc(100vh - 125px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .login-card {
+            width: 430px;
+            background: white;
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        }
+
+        .card-title {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .shield {
+            width: 65px;
+            height: 65px;
+            margin: auto;
+            border-radius: 50%;
+            background: #e7f2fb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+        }
+
+        .card-title h2 {
+            margin-top: 15px;
+            font-size: 24px;
+        }
+
+        .card-title p {
+            margin-top: 7px;
+            color: #667085;
+            font-size: 14px;
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .field input {
+            width: 100%;
+            height: 46px;
+            padding: 0 13px;
+            border: 1px solid #ccd5df;
+            border-radius: 7px;
+            font-size: 15px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .field input:focus {
+            border-color: #0878c9;
+            box-shadow: 0 0 0 3px rgba(8,120,201,0.1);
+        }
+
+        .verify-btn {
+            width: 100%;
+            height: 48px;
+            border: none;
+            border-radius: 7px;
+            background: #07579b;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .verify-btn:hover {
+            background: #06477e;
+        }
+
+        .warning {
+            margin-top: 22px;
+            padding: 13px;
+            border-radius: 7px;
+            background: #fff7e6;
+            border: 1px solid #f5d58a;
+            color: #795400;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        /* Result */
+        .result {
+            display: none;
+            text-align: center;
+        }
+
+        .result-icon {
+            width: 80px;
+            height: 80px;
+            margin: auto;
+            border-radius: 50%;
+            background: #ffe5e5;
+            border: 3px solid #e53935;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            50% {
+                box-shadow: 0 0 30px rgba(229,57,53,0.4);
+            }
+        }
+
+        .result h2 {
+            margin-top: 20px;
+            color: #d92121;
+            font-size: 26px;
+        }
+
+        .result-subtitle {
+            margin-top: 8px;
+            color: #667085;
+        }
+
+        .report {
+            margin-top: 25px;
+            text-align: left;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e1e5ea;
+        }
+
+        .report-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 13px 15px;
+            border-bottom: 1px solid #e1e5ea;
+            font-size: 13px;
+        }
+
+        .report-row:last-child {
+            border-bottom: none;
+        }
+
+        .report-row strong {
+            color: #555;
+        }
+
+        .red {
+            color: #d92121;
+            font-weight: bold;
+        }
+
+        .green {
+            color: #16803c;
+            font-weight: bold;
+        }
+
+        .lesson {
+            margin-top: 22px;
+            text-align: left;
+            background: #f5f9fc;
+            border-radius: 8px;
+            padding: 17px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .lesson h3 {
+            margin-bottom: 8px;
+        }
+
+        .back-btn {
+            margin-top: 22px;
+            width: 100%;
+            height: 44px;
+            border: 1px solid #07579b;
+            background: white;
+            color: #07579b;
+            border-radius: 7px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 0 20px;
+            }
+
+            .secure {
+                display: none;
+            }
+
+            .login-card {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="simulation-banner">
+        ⚠ <span>CYBERSECURITY LAB</span> — PHISHING AWARENESS SIMULATION
+    </div>
+
+    <header>
+        <div class="bank-name">
+            <div class="bank-icon">D</div>
+
+            <div>
+                <h1>Demo State Bank</h1>
+                <p>Educational Banking Simulation</p>
+            </div>
+        </div>
+
+        <div class="secure">
+            🔒 Secure Connection — SIMULATION
+        </div>
+    </header>
+
+
+    <main>
+
+        <div class="login-card">
+
+            <!-- Fake Login -->
+            <div id="loginSection">
+
+                <div class="card-title">
+
+                    <div class="shield">
+                        🛡️
+                    </div>
+
+                    <h2>Account Verification</h2>
+
+                    <p>
+                        Verify your account to continue
+                    </p>
+
+                </div>
+
+
+                <form id="fakeForm">
+
+                    <div class="field">
+                        <label for="customerId">
+                            Customer ID
+                        </label>
+
+                        <input
+                            id="customerId"
+                            type="text"
+                            placeholder="Enter demo customer ID"
+                            autocomplete="off"
+                        >
+                    </div>
+
+
+                    <div class="field">
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <input
+                            id="password"
+                            type="password"
+                            placeholder="Enter demo password"
+                            autocomplete="off"
+                        >
+                    </div>
+
+
+                    <div class="field">
+                        <label for="otp">
+                            OTP
+                        </label>
+
+                        <input
+                            id="otp"
+                            type="text"
+                            inputmode="numeric"
+                            maxlength="6"
+                            placeholder="Enter demo OTP"
+                            autocomplete="off"
+                        >
+                    </div>
+
+
+                    <button class="verify-btn" type="submit">
+                        Verify Account
+                    </button>
+
+                </form>
+
+
+                <div class="warning">
+                    ⚠ <strong>Educational Simulation:</strong>
+                    Never enter real banking credentials, OTPs,
+                    PINs or financial information into this page.
+                </div>
+
+            </div>
+
+
+            <!-- Security Result -->
+            <div id="resultSection" class="result">
+
+                <div class="result-icon">
+                    ⚠
+                </div>
+
+                <h2>PHISHING ATTACK DETECTED</h2>
+
+                <p class="result-subtitle">
+                    You interacted with a simulated phishing page.
+                </p>
+
+
+                <div class="report">
+
+                    <div class="report-row">
+                        <strong>Attack</strong>
+                        <span>Phishing Simulation</span>
+                    </div>
+
+                    <div class="report-row">
+                        <strong>Target</strong>
+                        <span>Demo State Bank</span>
+                    </div>
+
+                    <div class="report-row">
+                        <strong>Customer ID</strong>
+                        <span class="green">NOT STORED</span>
+                    </div>
+
+                    <div class="report-row">
+                        <strong>Password</strong>
+                        <span class="green">NOT CAPTURED</span>
+                    </div>
+
+                    <div class="report-row">
+                        <strong>OTP</strong>
+                        <span class="green">NOT CAPTURED</span>
+                    </div>
+
+                    <div class="report-row">
+                        <strong>Data Transmitted</strong>
+                        <span class="green">NONE</span>
+                    </div>
+
+                    <div class="report-row">
+                        <strong>Simulation</strong>
+                        <span class="red">YES</span>
+                    </div>
+
+                </div>
+
+
+                <div class="lesson">
+
+                    <h3>🔎 What Happened?</h3>
+
+                    A phishing attack can use a convincing message
+                    and fake login page to trick a user into entering
+                    sensitive information.
+
+                    <br><br>
+
+                    <strong>How to stay safe:</strong>
+
+                    <br>
+
+                    ✓ Check the website domain<br>
+                    ✓ Don't trust urgent login messages<br>
+                    ✓ Open banking websites manually<br>
+                    ✓ Never share OTPs<br>
+                    ✓ Use MFA/passkeys
+
+                </div>
+
+
+                <button class="back-btn" onclick="location.reload()">
+                    ↩ Restart Simulation
+                </button>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <script>
+
+        const form = document.getElementById("fakeForm");
+        const loginSection = document.getElementById("loginSection");
+        const resultSection = document.getElementById("resultSection");
+
+        form.addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            /*
+             * SECURITY LAB:
+             * The entered values are intentionally NOT read,
+             * stored, logged, or transmitted.
+             */
+
+            loginSection.style.display = "none";
+            resultSection.style.display = "block";
+
+        });
+
+    </script>
+
+</body>
+</html>
