@@ -1,654 +1,445 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Buymore — Account Verification</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      margin: 0;
-      width: 100%;
-      min-height: 100%;
-      font-family: Inter, Arial, sans-serif;
-      background: #f7f7f8;
-      color: #0b0b0b;
-    }
-
-    /* =========================
-       DUMMY BU YMORE BACKGROUND
-       ========================= */
-
-    header {
-      height: 78px;
-      background: white;
-      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
-      display: flex;
-      align-items: center;
-    }
-
-    .nav {
-      width: 100%;
-      max-width: 1200px;
-      margin: auto;
-      padding: 0 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .logo {
-      width: 52px;
-      height: 52px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #c77dff, #8a4bd6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 20px;
-      font-weight: 800;
-    }
-
-    .brand-name {
-      font-size: 20px;
-      font-weight: 800;
-    }
-
-    .tagline {
-      font-size: 13px;
-      color: #777;
-      margin-top: 2px;
-    }
-
-    nav {
-      display: flex;
-      gap: 25px;
-      color: #555;
-      font-weight: 600;
-    }
-
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 25px;
-      color: #777;
-    }
-
-    .search {
-      width: 200px;
-      border: 0;
-      outline: 0;
-      font-size: 14px;
-      background: transparent;
-    }
-
-    /* =========================
-       BACKGROUND CONTENT
-       ========================= */
-
-    .hero {
-      max-width: 1200px;
-      margin: 30px auto;
-      padding: 25px 20px;
-      display: grid;
-      grid-template-columns: 1fr 430px;
-      gap: 25px;
-    }
-
-    .hero-left h1 {
-      font-size: 38px;
-      margin: 70px 0 12px;
-    }
-
-    .hero-left p {
-      color: #777;
-      font-size: 16px;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 12px;
-      margin-top: 25px;
-    }
-
-    .hero-btn {
-      border: 0;
-      padding: 13px 20px;
-      border-radius: 12px;
-      background: #c77dff;
-      color: white;
-      font-weight: 700;
-    }
-
-    .hero-btn.secondary {
-      background: white;
-      color: #8a4bd6;
-      border: 1px solid #e4d5f5;
-    }
-
-    .images {
-      display: flex;
-      gap: 12px;
-    }
-
-    .image {
-      height: 310px;
-      flex: 1;
-      border-radius: 15px;
-      background-size: cover;
-      background-position: center;
-    }
-
-    .image:first-child {
-      background-image: url(
-        "https://images.unsplash.com/photo-1520975912649-4b3bcbf8b1d5?q=80&w=900&auto=format&fit=crop"
-      );
-    }
-
-    .image:last-child {
-      background-image: url(
-        "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=900&auto=format&fit=crop"
-      );
-    }
-
-    /* =========================
-       PHISHING SIMULATION OVERLAY
-       ========================= */
-
-    .overlay {
-      position: fixed;
-      inset: 0;
-
-      background:
-        linear-gradient(
-          135deg,
-          rgba(83, 36, 171, 0.90),
-          rgba(151, 70, 239, 0.88),
-          rgba(219, 56, 153, 0.82)
-        );
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      padding: 20px;
-
-      z-index: 9999;
-    }
-
-    /* =========================
-       LOGIN CARD
-       ========================= */
-
-    .login-card {
-      width: 100%;
-      max-width: 498px;
-
-      background: #ffffff;
-
-      border-radius: 20px;
-
-      padding: 34px 36px;
-
-      box-shadow:
-        0 25px 70px rgba(0, 0, 0, 0.25);
-
-      position: relative;
-    }
-
-    .login-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      margin-bottom: 25px;
-    }
-
-    .login-header h2 {
-      margin: 0;
-      font-size: 27px;
-    }
-
-    .close {
-      border: 0;
-      background: transparent;
-      color: #666;
-
-      font-size: 25px;
-
-      cursor: pointer;
-
-      padding: 0;
-    }
-
-    /* =========================
-       TABS
-       ========================= */
-
-    .tabs {
-      display: flex;
-
-      border-bottom: 1px solid #e5e5e5;
-
-      margin-bottom: 30px;
-    }
-
-    .tab {
-      flex: 1;
-
-      border: 0;
-      background: transparent;
-
-      padding: 13px;
-
-      font-size: 15px;
-
-      font-weight: 700;
-
-      color: #555;
-
-      cursor: pointer;
-
-      border-bottom: 2px solid transparent;
-    }
-
-    .tab.active {
-      color: #9148dd;
-
-      border-bottom-color: #c77dff;
-    }
-
-    /* =========================
-       FORM
-       ========================= */
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-
-      margin-bottom: 8px;
-
-      font-size: 14px;
-
-      font-weight: 700;
-    }
-
-    input {
-      width: 100%;
-
-      height: 57px;
-
-      padding: 0 15px;
-
-      border: 1px solid #dedede;
-
-      border-radius: 12px;
-
-      font-size: 16px;
-
-      outline: none;
-
-      transition: 0.2s;
-    }
-
-    input:focus {
-      border-color: #c77dff;
-
-      box-shadow:
-        0 0 0 3px rgba(199, 125, 255, 0.12);
-    }
-
-    /* =========================
-       LOGIN BUTTON
-       ========================= */
-
-    .login-button {
-      width: 100%;
-
-      height: 48px;
-
-      border: 0;
-
-      border-radius: 11px;
-
-      background: #c276ed;
-
-      color: white;
-
-      font-size: 16px;
-
-      font-weight: 700;
-
-      cursor: pointer;
-
-      box-shadow:
-        0 8px 20px rgba(199, 125, 255, 0.25);
-
-      transition: 0.2s;
-    }
-
-    .login-button:hover {
-      background: #a855d9;
-    }
-
-    /* =========================
-       BOTTOM TEXT
-       ========================= */
-
-    .create-account {
-      text-align: center;
-
-      margin-top: 22px;
-
-      color: #777;
-
-      font-size: 14px;
-    }
-
-    .create-account span {
-      color: #9148dd;
-
-      font-weight: 700;
-    }
-
-    /* =========================
-       TRAINING LABEL
-       ========================= */
-
-    .training-label {
-      position: fixed;
-
-      bottom: 12px;
-
-      left: 50%;
-
-      transform: translateX(-50%);
-
-      color: rgba(255,255,255,.8);
-
-      font-size: 11px;
-
-      z-index: 10000;
-    }
-
-    /* =========================
-       MOBILE
-       ========================= */
-
-    @media (max-width: 700px) {
-
-      nav {
-        display: none;
-      }
-
-      .search {
-        display: none;
-      }
-
-      .hero {
-        grid-template-columns: 1fr;
-      }
-
-      .login-card {
-        max-width: 430px;
-
-        padding: 28px 24px;
-      }
-
-      .login-header h2 {
-        font-size: 24px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Lab Control Panel</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #050505;
+            color: #e5e7eb;
+            font-family: Consolas, "Courier New", monospace;
+        }
+
+        header {
+            padding: 22px 35px;
+            background: #090909;
+            border-bottom: 1px solid #292929;
+        }
+
+        header h1 {
+            margin: 0;
+            color: #ff3333;
+            font-size: 25px;
+        }
+
+        header p {
+            margin: 7px 0 0;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 950px;
+            margin: 45px auto;
+        }
+
+        .card {
+            background: #101010;
+            border: 1px solid #333;
+            border-radius: 14px;
+            padding: 35px;
+            box-shadow: 0 0 35px rgba(255, 0, 0, 0.10);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: #fff;
+        }
+
+        .status {
+            padding: 14px 18px;
+            margin: 20px 0 25px;
+            background: #07140b;
+            border: 1px solid #166534;
+            border-radius: 7px;
+            color: #4ade80;
+        }
+
+        .status span {
+            margin-right: 8px;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 14px;
+            background: #050505;
+            color: #fff;
+            border: 1px solid #3b3b3b;
+            border-radius: 7px;
+            outline: none;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 14px;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.15);
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .send-btn {
+            width: 100%;
+            margin-top: 28px;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #b91c1c;
+            color: white;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .send-btn:hover {
+            background: #dc2626;
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.25);
+        }
+
+        .terminal {
+            margin-top: 30px;
+            background: #020202;
+            border: 1px solid #303030;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 220px;
+            line-height: 1.8;
+            overflow-wrap: anywhere;
+        }
+
+        .terminal-title {
+            color: #aaa;
+            border-bottom: 1px solid #292929;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+
+        .green {
+            color: #4ade80;
+        }
+
+        .red {
+            color: #ff4444;
+        }
+
+        .yellow {
+            color: #facc15;
+        }
+
+        .gray {
+            color: #777;
+        }
+
+        .info {
+            margin-top: 25px;
+            padding: 16px;
+            background: #111827;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            color: #9ca3af;
+            line-height: 1.6;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 20px;
+            }
+
+            .container {
+                width: 94%;
+                margin: 25px auto;
+            }
+
+            .card {
+                padding: 22px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-  <!-- =========================
-       DUMMY BU YMORE PAGE
-       ========================= -->
+<header>
+    <h1>⚠ PHISHING LAB CONTROL PANEL</h1>
 
-  <header>
+    <p>
+        Ethical Hacking • Security Awareness Demonstration
+    </p>
+</header>
 
-    <div class="nav">
 
-      <div class="brand">
+<div class="container">
 
-        <div class="logo">
-          BM
+    <div class="card">
+
+        <h2>Simulated Phishing Campaign</h2>
+
+        <div class="status">
+            <span>●</span>
+            PHISHING LAB READY
+        </div>
+
+
+        <!-- RECIPIENT -->
+
+        <label for="recipient">
+            Demo Recipient
+        </label>
+
+        <input
+            id="recipient"
+            type="email"
+            placeholder="student@example.test"
+        >
+
+
+        <!-- LINK -->
+
+        <label for="phishingLink">
+            Controlled Demo Link
+        </label>
+
+        <input
+            id="phishingLink"
+            type="url"
+            placeholder="https://clickjackingattack.vercel.app/fake.html"
+        >
+
+
+        <!-- SUBJECT -->
+
+        <label for="subject">
+            Email Subject
+        </label>
+
+        <input
+            id="subject"
+            type="text"
+            value="Security Verification Required"
+        >
+
+
+        <!-- MESSAGE -->
+
+        <label for="message">
+            Message
+        </label>
+
+        <textarea id="message" rows="8">Dear Customer,
+
+This is a cybersecurity awareness demonstration.
+
+Please review the security verification page below:
+
+</textarea>
+
+
+        <!-- BUTTON -->
+
+        <button
+            class="send-btn"
+            onclick="openGmailCompose()"
+        >
+            ⚡ SEND MAIL
+        </button>
+
+
+        <!-- TERMINAL -->
+
+        <div class="terminal">
+
+            <div class="terminal-title">
+                [ PHISHING LAB TERMINAL ]
+            </div>
+
+            <div id="console">
+
+                <div class="green">
+                    [✓] System initialized
+                </div>
+
+                <div class="gray">
+                    [SYSTEM] Waiting for campaign...
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="info">
+
+            <strong>Security Awareness Lab</strong>
+
+            <br><br>
+
+            The button opens Gmail's compose interface with
+            the supplied demonstration information pre-filled.
+            Gmail still requires the user to review and manually
+            send the message.
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function openGmailCompose() {
+
+    const recipient =
+        document.getElementById("recipient").value.trim();
+
+    const link =
+        document.getElementById("phishingLink").value.trim();
+
+    const subject =
+        document.getElementById("subject").value.trim();
+
+    const message =
+        document.getElementById("message").value.trim();
+
+    const terminal =
+        document.getElementById("console");
+
+
+    /* Validate recipient */
+
+    if (!recipient) {
+
+        terminal.innerHTML = `
+            <div class="red">
+                [ERROR] Enter a demo recipient.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    /* Validate link */
+
+    if (!link) {
+
+        terminal.innerHTML = `
+            <div class="red">
+                [ERROR] Enter a controlled demo link.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    /*
+     * Add the controlled demonstration link
+     * to the email body.
+     */
+
+    const emailBody =
+        message +
+        "\n\n" +
+        "Verification Link:\n" +
+        link +
+        "\n\n" +
+        "Cybersecurity Awareness Demonstration";
+
+
+    /*
+     * Gmail Compose URL
+     */
+
+    const gmailURL =
+        "https://mail.google.com/mail/?view=cm" +
+        "&fs=1" +
+        "&to=" + encodeURIComponent(recipient) +
+        "&su=" + encodeURIComponent(subject) +
+        "&body=" + encodeURIComponent(emailBody);
+
+
+    /* Update terminal */
+
+    terminal.innerHTML = `
+
+        <div class="green">
+            [✓] Campaign prepared
         </div>
 
         <div>
-          <div class="brand-name">
-            buymore
-          </div>
-
-          <div class="tagline">
-            Style that fits you.
-          </div>
+            [✓] Recipient:
+            ${escapeHTML(recipient)}
         </div>
 
-      </div>
-
-      <nav>
-        <span>Home</span>
-        <span>T-Shirts</span>
-        <span>Pants</span>
-        <span>New Arrivals</span>
-        <span>Offers</span>
-      </nav>
-
-      <div class="nav-right">
-
-        <input
-          class="search"
-          placeholder="Search products..."
-        >
-
-        <span>🛒</span>
-
-        <span>Login</span>
-
-      </div>
-
-    </div>
-
-  </header>
-
-
-  <section class="hero">
-
-    <div class="hero-left">
-
-      <h1>
-        Upgrade Your Everyday Style
-      </h1>
-
-      <p>
-        Premium T-Shirts and Pants designed
-        for your everyday look.
-      </p>
-
-      <div class="buttons">
-
-        <button class="hero-btn">
-          Shop T-Shirts
-        </button>
-
-        <button class="hero-btn secondary">
-          Shop Pants
-        </button>
-
-      </div>
-
-    </div>
-
-    <div class="images">
-
-      <div class="image"></div>
-      <div class="image"></div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       PHISHING SIMULATION
-       ========================= -->
-
-  <div class="overlay">
-
-    <div class="login-card">
-
-      <div class="login-header">
-
-        <h2>
-          Welcome Back
-        </h2>
-
-        <button
-          class="close"
-          onclick="closeSimulation()"
-          aria-label="Close"
-        >
-          ×
-        </button>
-
-      </div>
-
-
-      <div class="tabs">
-
-        <button class="tab active">
-          Login
-        </button>
-
-        <button class="tab">
-          Create Account
-        </button>
-
-      </div>
-
-
-      <form id="phishing-form">
-
-        <div class="form-group">
-
-          <label for="username">
-            Username
-          </label>
-
-          <input
-            id="username"
-            type="text"
-            placeholder="Username"
-            autocomplete="off"
-            required
-          >
-
+        <div>
+            [✓] Subject:
+            ${escapeHTML(subject)}
         </div>
 
+        <br>
 
-        <div class="form-group">
-
-          <label for="password">
-            Password
-          </label>
-
-          <input
-            id="password"
-            type="password"
-            placeholder="Password"
-            autocomplete="off"
-            required
-          >
-
+        <div class="yellow">
+            [!] Opening Gmail Compose...
         </div>
 
+        <br>
 
-        <button
-          type="submit"
-          class="login-button"
-        >
-          Login
-        </button>
+        <div class="green">
+            [✓] Gmail Compose ready
+        </div>
 
-      </form>
+    `;
 
-
-      <div class="create-account">
-
-        Don't have an account?
-        <span>Create Account</span>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <div class="training-label">
-    Buymore Cybersecurity Training Simulation
-  </div>
-
-
-  <script>
 
     /*
-     * LOCAL PHISHING-AWARENESS SIMULATION
-     *
-     * The values are not sent to a server.
-     * They are only passed to the local result page.
+     * Open Gmail in a NEW TAB.
      */
 
-    document
-      .getElementById("phishing-form")
-      .addEventListener("submit", function(event) {
-
-        event.preventDefault();
-
-        const username =
-          document.getElementById("username").value;
-
-        const password =
-          document.getElementById("password").value;
-
-        const params = new URLSearchParams();
-
-        params.set("username", username);
-        params.set("password", password);
-
-        window.location.href =
-          "phishing-result.html?" + params.toString();
-
-      });
+    window.open(
+        gmailURL,
+        "_blank"
+    );
+}
 
 
-    function closeSimulation() {
+/* Prevent HTML injection in terminal */
 
-      window.location.href = "index.html";
+function escapeHTML(value) {
 
-    }
+    return value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
-  </script>
+}
+
+</script>
 
 </body>
 </html>

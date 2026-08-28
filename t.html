@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Buymore Magic Link Login</title>
+</head>
+<body>
+
+    <h2>Login with Magic Link</h2>
+
+    <input
+        id="email"
+        type="email"
+        placeholder="Enter your email"
+    >
+
+    <button onclick="sendMagicLink()">
+        Send Magic Link
+    </button>
+
+    <p id="message"></p>
+
+    <script type="module">
+
+        import { createClient }
+        from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+        const SUPABASE_URL = "https://dmcozhkvggtxavxpinea.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_k6YoDSrsBsDCggBLXAUPjw_1fAbP3nl";
+
+        const supabase = createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY
+        );
+
+        window.sendMagicLink = async function () {
+
+            const email =
+                document.getElementById("email").value.trim();
+
+            const message =
+                document.getElementById("message");
+
+            if (!email) {
+                message.textContent =
+                    "Please enter your email.";
+                return;
+            }
+
+            const { error } =
+                await supabase.auth.signInWithOtp({
+                    email: email,
+                    options: {
+                        emailRedirectTo:
+                            "https://your-site.com/dashboard"
+                    }
+                });
+
+            if (error) {
+
+                message.textContent =
+                    "Error: " + error.message;
+
+            } else {
+
+                message.textContent =
+                    "Magic Link sent. Check your email.";
+
+            }
+        };
+
+    </script>
+
+</body>
+</html>
